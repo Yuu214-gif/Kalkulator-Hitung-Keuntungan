@@ -1,96 +1,153 @@
-// Fungsi untuk menambah baris input varian baru
-function addVarian() {
-    const container = document.getElementById('varian-input-container');
-    const newDiv = document.createElement('div');
-    newDiv.className = 'varian-item';
-    newDiv.innerHTML = `
-        <input type="text" class="nama-barang" placeholder="OD 25/Warna Merah">
-        <input type="number" class="jumlah-barang" placeholder="0" value="0">
-        <input type="number" class="modal-per-pcs" placeholder="Rp 890" value="0">
-        <button onclick="removeVarian(this)" class="remove-btn">X</button>
-    `;
-    container.appendChild(newDiv);
-}
+/**
+ * KALKULATOR KEUNTUNGAN - VERSI TOMBOL MANUAL (CLEAN)
+ */
 
-// Fungsi untuk menghapus baris input varian
-function removeVarian(button) {
-    const item = button.parentNode;
-    item.remove();
-}
-
-// Tambahkan varian default saat memuat agar ada 1 baris
+// 1. Inisialisasi saat halaman dibuka
 window.onload = function() {
-    // Pastikan container sudah ada isinya 1, jika belum, tambahkan
-    if (document.querySelectorAll('.varian-item').length === 0) {
-        addVarian();
-    }
+    loadData();
 };
 
-function hitungKeuntungan() {
-    // Ambil data keuangan
-    const hargaJualKotor = parseFloat(document.getElementById('hargaJualKotor').value) || 0;
-    const voucherSubsidi = parseFloat(document.getElementById('voucherSubsidi').value) || 0; 
-    const biayaProsesPesanan = parseFloat(document.getElementById('biayaProsesPesanan').value) || 0; 
-    const persenAdmin = parseFloat(document.getElementById('persenAdmin').value) || 0;
+// 2. Fungsi Tambah Varian (dengan animasi slide down)
+function addVarian(nama = "", qty = "", modal = "") {
+    const container = document.getElementById('varian-input-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'varian-item';
     
-    // --- Langkah 1: Hitung Harga Jual Kotor Efektif ---
-    // Ini adalah dasar perhitungan komisi dan uang yang masuk
+    newRow.innerHTML = `
+        <input type="text" class="nama-barang" placeholder="Nama Barang" value="${nama}" oninput="saveData()">
+        <input type="number" class="jumlah-barang" placeholder="0" value="${qty}" oninput="saveData()">
+        <input type="number" class="modal-per-pcs" placeholder="Rp" value="${modal}" oninput="saveData()">
+        <button type="button" onclick="removeVarian(this)" class="remove-btn">×</button>
+    `;
+    
+    container.appendChild(newRow);
+    saveData();
+}
+
+// 3. Fungsi Hapus Varian (dengan animasi slide out)
+function removeVarian(btn) {
+    const row = btn.parentElement;
+    row.style.opacity = '0';
+    row.style.transform = 'translateX(20px)';
+    
+    setTimeout(() => {
+        row.remove();
+        saveData(); // Simpan perubahan susunan barang
+    }, 300);
+}
+
+// 4. LOGIKA UTAMA: Hitung Keuntungan (Hanya jalan pas tombol diklik)
+function hitungKeuntungan() {
+    // Ambil input utama
+    const hargaJualKotor = parseFloat(document.getElementById('hargaJualKotor').value) || 0;
+    const voucherSubsidi = parseFloat(document.getElementById('voucherSubsidi').value) || 0;
+    const biayaProsesPesanan = parseFloat(document.getElementById('biayaProsesPesanan').value) || 0;
+    const persenAdmin = parseFloat(document.getElementById('persenAdmin').value) || 0;
+
+    // A. Hitung Harga Jual Efektif
     const hargaJualEfektif = hargaJualKotor - voucherSubsidi;
 
-    // --- Langkah 2: Hitung Total Biaya Modal Multi-Varian ---
+    // B. Hitung Modal (Looping semua varian)
     let totalModal = 0;
-    const varianItems = document.querySelectorAll('.varian-item');
-    
-    varianItems.forEach(item => {
-        const jumlah = parseInt(item.querySelector('.jumlah-barang').value) || 0;
-        const modal = parseFloat(item.querySelector('.modal-per-pcs').value) || 0;
-        totalModal += (jumlah * modal);
+    document.querySelectorAll('.varian-item').forEach(row => {
+        const q = parseFloat(row.querySelector('.jumlah-barang').value) || 0;
+        const m = parseFloat(row.querySelector('.modal-per-pcs').value) || 0;
+        totalModal += (q * m);
     });
+
+    // C. Hitung Potongan & Laba
+    const biayaAdmin = (hargaJualEfektif * persenAdmin) / 100;
+    const totalPotongan = biayaAdmin + biayaProsesPesanan;
+    const bersihDiterima = hargaJualEfektif - totalPotongan;
+    const labaBersih = bersihDiterima - totalModal;
+
+    // D. Update UI dengan animasi bounce
+    const resultBox = document.querySelector('.result-box');
+    resultBox.classList.remove('updated');
+    void resultBox.offsetWidth; // Trigger reflow untuk restart animasi
+    resultBox.classList.add('updated');
+
+    const formatRp = (n) => "Rp " + Math.round(n).toLocaleString('id-ID');
     
-    // --- Langkah 3: Hitung Total Potongan ---
-    
-    // 3a. Hitung Biaya Komisi (Admin Persen) dari Harga Jual Efektif
-    const biayaKomisi = (hargaJualEfektif * persenAdmin) / 100;
+    document.getElementById('hargaJualEfektif').innerText = formatRp(hargaJualEfektif);
+    document.getElementById('totalModal').innerText = formatRp(totalModal);
+    document.getElementById('totalPotongan').innerText = formatRp(totalPotongan);
+    document.getElementById('penghasilanOtomatis').innerText = formatRp(bersihDiterima);
+    document.getElementById('keuntunganBersih').innerText = formatRp(labaBersih);
 
-    // 3b. Hitung Total Potongan (Komisi + Biaya Proses Pesanan)
-    const totalPotongan = biayaKomisi + biayaProsesPesanan;
-
-    // 4. Hitung Penghasilan Akhir (Uang Bersih Diterima)
-    // Rumus: Harga Jual Efektif - Total Potongan
-    const penghasilanAkhirOtomatis = hargaJualEfektif - totalPotongan;
-
-    // 5. Hitung Keuntungan Bersih
-    // Rumus: Penghasilan Akhir - Total Modal
-    const keuntunganBersih = penghasilanAkhirOtomatis - totalModal;
-
-    // --- Tampilkan Hasil ---
-
-    // Fungsi format Rupiah
-    const formatRupiah = (angka) => {
-        const sign = angka < 0 ? '-' : '';
-        const absoluteAngka = Math.abs(angka);
-        const dibulatkan = Math.round(absoluteAngka); 
-        return sign + 'Rp ' + dibulatkan.toLocaleString('id-ID');
-    };
-
-    // Tampilkan data output
-    document.getElementById('hargaJualEfektif').textContent = formatRupiah(hargaJualEfektif);
-    document.getElementById('totalModal').textContent = formatRupiah(totalModal);
-    document.getElementById('totalPotongan').textContent = formatRupiah(totalPotongan);
-    document.getElementById('penghasilanOtomatis').textContent = formatRupiah(penghasilanAkhirOtomatis);
-    document.getElementById('keuntunganBersih').textContent = formatRupiah(keuntunganBersih);
-
+    // E. Status Untung/Rugi
     const statusMsg = document.getElementById('statusMsg');
-    
-    // Tentukan status (Untung/Rugi)
-    if (keuntunganBersih > 0) {
-        statusMsg.textContent = "Status: Transaksi INI UNTUNG!";
+    if (labaBersih > 0) {
+        statusMsg.innerText = "💰 STATUS: UNTUNG";
         statusMsg.className = "status-msg untung";
-    } else if (keuntunganBersih < 0) {
-        statusMsg.textContent = "Status: Transaksi INI RUGI!";
+    } else if (labaBersih < 0) {
+        statusMsg.innerText = "⚠️ STATUS: RUGI";
         statusMsg.className = "status-msg rugi";
     } else {
-        statusMsg.textContent = "Status: Titik Impas (BEP).";
+        statusMsg.innerText = "⚖️ STATUS: IMPAS";
         statusMsg.className = "status-msg";
     }
+
+    // Simpan posisi terakhir saat klik hitung
+    saveData();
+}
+
+// 5. Fungsi Storage (Save & Load)
+function saveData() {
+    const varianArray = [];
+    document.querySelectorAll('.varian-item').forEach(row => {
+        varianArray.push({
+            n: row.querySelector('.nama-barang').value,
+            q: row.querySelector('.jumlah-barang').value,
+            m: row.querySelector('.modal-per-pcs').value
+        });
+    });
+
+    const dataAplikasi = {
+        jual: document.getElementById('hargaJualKotor').value,
+        subsidi: document.getElementById('voucherSubsidi').value,
+        proses: document.getElementById('biayaProsesPesanan').value,
+        admin: document.getElementById('persenAdmin').value,
+        listVarian: varianArray
+    };
+
+    localStorage.setItem('db_kalkulator_v2', JSON.stringify(dataAplikasi));
+}
+
+function loadData() {
+    const raw = localStorage.getItem('db_kalkulator_v2');
+    if (!raw) {
+        addVarian(); 
+        return;
+    }
+
+    const data = JSON.parse(raw);
+    document.getElementById('hargaJualKotor').value = data.jual || 0;
+    document.getElementById('voucherSubsidi').value = data.subsidi || 0;
+    document.getElementById('biayaProsesPesanan').value = data.proses || 0;
+    document.getElementById('persenAdmin').value = data.admin || 0;
+
+    // Load Varian
+    const container = document.getElementById('varian-input-container');
+    container.innerHTML = ""; 
+    if (data.listVarian && data.listVarian.length > 0) {
+        data.listVarian.forEach(v => addVarian(v.n, v.q, v.m));
+    } else {
+        addVarian();
+    }
+}
+
+// 6. Fungsi Modal Reset (Animasi Bounce)
+function resetData() {
+    document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function executeReset() {
+    localStorage.removeItem('db_kalkulator_v2');
+    document.querySelector('.container').style.opacity = '0';
+    setTimeout(() => location.reload(), 300);
 }
