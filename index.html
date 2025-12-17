@@ -3,67 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Hitung Keuntungan</title>
+    <title>Kalkulator Keuntungan Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h2>💰 Kalkulator Keuntungan</h2>
         
-        <h3>Data Keuangan (Dari Rincian Pesanan)</h3>
-        <div class="input-group">
-            <label for="hargaJualKotor">1. Total Pesanan (Harga Jual Kotor/Rp):</label>
-            <input type="number" id="hargaJualKotor" placeholder="Contoh: 10000" value="0">
-        </div>
-        <div class="input-group">
-            <label for="voucherSubsidi">2. Voucher & Subsidi Shopee (Rp):</label>
-            <input type="number" id="voucherSubsidi" placeholder="Contoh: 1000" value="0">
-        </div>
-        
-        <h3>Data Biaya (Potongan Platform)</h3>
-        <div class="input-group">
-            <label for="biayaProsesPesanan">3. Biaya Proses Pesanan (Rp):</label>
-            <input type="number" id="biayaProsesPesanan" placeholder="Contoh: 1250" value="0">
-        </div>
-        <div class="input-group">
-            <label for="persenAdmin">4. Persentase Komisi/Admin (Contoh: 8 untuk 8%):</label>
-            <input type="number" id="persenAdmin" placeholder="Contoh: 8" value="0">
-        </div>
-
-        <h3>Data Modal Multi-Varian</h3>
-        
-        <div class="varian-header">
-            <span class="header-name">Varian/Nama Barang</span>
-            <span class="header-qty">Jumlah beli (pcs)</span>
-            <span class="header-modal">Modal (Harga Beli) per 1 pcs (Rp)</span>
-            <span class="header-action"></span>
-        </div>
-        
-        <div id="varian-input-container">
-            <div class="varian-item">
-                <input type="text" class="nama-barang" placeholder="Nama Barang">
-                <input type="number" class="jumlah-barang" placeholder="0">
-                <input type="number" class="modal-per-pcs" placeholder="100">
-                <button onclick="removeVarian(this)" class="remove-btn">X</button>
+        <section>
+            <h3>Data Keuangan</h3>
+            <div class="input-group">
+                <label>Total Pesanan (Harga Jual Kotor)</label>
+                <input type="number" id="hargaJualKotor" placeholder="Rp 0">
             </div>
-        </div>
-        <button onclick="addVarian()" class="add-btn">+ Tambah Varian Barang</button>
+            <div class="input-group">
+                <label>Voucher Toko/Shopee</label>
+                <input type="number" id="voucherSubsidi" placeholder="Rp 0">
+            </div>
+        </section>
         
-        <button onclick="hitungKeuntungan()" style="margin-top: 20px;">Hitung Keuntungan</button>
+        <section>
+            <h3>Potongan Platform</h3>
+            <div class="input-group">
+                <label>Biaya Proses Pesanan</label>
+                <input type="number" id="biayaProsesPesanan" placeholder="Rp 0">
+            </div>
+            <div class="input-group">
+                <label>Persentase Admin (%)</label>
+                <input type="number" id="persenAdmin" placeholder="Contoh: 8">
+            </div>
+        </section>
 
-        <hr>
+        <section class="varian-section">
+            <h3>Data Modal Multi-Varian</h3>
+            
+            <div class="varian-header">
+                <span>Varian Barang</span>
+                <span>Qty</span>
+                <span>Modal/pcs</span>
+                <span></span>
+            </div>
+            
+            <div id="varian-input-container"></div>
+            
+            <button onclick="addVarian()" class="add-btn">+ Tambah Varian</button>
+        </section>
+
+        <button onclick="hitungKeuntungan()" class="calc-btn">Hitung Keuntungan</button>
+        <button onclick="resetData()" class="reset-btn">Reset Semua Data</button>
 
         <div class="result-box">
             <h3>Hasil Perhitungan</h3>
-            <p>Harga Jual Kotor Efektif: <span id="hargaJualEfektif">Rp 0</span></p>
-            <p>Total Biaya Modal: <span id="totalModal">Rp 0</span></p>
-            <p>Total Potongan Platform: <span id="totalPotongan">Rp 0</span></p>
-            <p>Penghasilan Akhir (Bersih Diterima): <span id="penghasilanOtomatis">Rp 0</span></p>
-            <p>Keuntungan Bersih: <span id="keuntunganBersih">Rp 0</span></p>
-            <p class="status-msg" id="statusMsg"></p>
+            <div class="res-row">Harga Jual Efektif: <span id="hargaJualEfektif">Rp 0</span></div>
+            <div class="res-row">Total Biaya Modal: <span id="totalModal">Rp 0</span></div>
+            <div class="res-row">Total Potongan: <span id="totalPotongan">Rp 0</span></div>
+            <div class="res-row">Bersih Diterima: <span id="penghasilanOtomatis">Rp 0</span></div>
+            <div class="res-row total">Keuntungan Bersih: <span id="keuntunganBersih">Rp 0</span></div>
+            <div id="statusMsg" class="status-msg"></div>
         </div>
     </div>
     <script src="script.js"></script>
-</body>
 
+    <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-icon">⚠️</div>
+        <h3>Hapus Semua Data?</h3>
+        <p>Tindakan ini akan menghapus semua inputan dan data yang tersimpan secara permanen.</p>
+        <div class="modal-buttons">
+            <button onclick="closeModal()" class="btn-cancel">Batal</button>
+            <button onclick="executeReset()" class="btn-confirm">Ya, Hapus!</button>
+        </div>
+    </div>
+</div>
+</body>
 </html>
