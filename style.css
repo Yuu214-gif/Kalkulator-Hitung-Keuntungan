@@ -1,221 +1,239 @@
+:root {
+    --primary: #007bff;
+    --orange: #ff5722;
+    --bg: #f4f7f9;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #e9eff5; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    font-family: sans-serif;
+    background-color: var(--bg);
     margin: 0;
+    padding: 20px 10px;
 }
 
 .container {
-    background-color: #ffffff;
-    padding: 35px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 550px; /* Diperlebar lagi */
-    box-sizing: border-box;
-}
-
-h2 {
-    text-align: center;
-    color: #007bff;
-    margin-bottom: 25px;
-    font-weight: 600;
-}
-
-h3 {
-    color: #333;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
-    margin-top: 25px;
-    margin-bottom: 15px;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: #555;
-    font-size: 0.95em;
-}
-
-input[type="number"], input[type="text"] {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input[type="number"]:focus, input[type="text"]:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    outline: none;
-}
-
-/* --- Tombol Utama (Hitung) --- */
-button {
-    width: 100%;
-    padding: 14px;
-    background-color: #ff5722; 
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 17px;
-    font-weight: 600;
-    margin-top: 20px;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
-}
-
-button:hover {
-    background-color: #e64a19;
-}
-
-button:active {
-    transform: scale(0.99);
-}
-
-hr {
-    border: 0;
-    border-top: 1px solid #eee;
-    margin: 25px 0;
-}
-
-/* --- Gaya Hasil --- */
-.result-box {
+    background: #fff;
+    max-width: 500px;
+    margin: 0 auto;
     padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.result-box h3 {
-    margin-top: 0;
-    color: #333;
-    border-bottom: none;
-    text-align: center;
-    font-size: 1.3em;
+h2, h3 { color: #333; margin-bottom: 15px; }
+h3 { border-left: 4px solid var(--primary); padding-left: 10px; font-size: 1rem; margin-top: 25px;}
+
+.input-group { margin-bottom: 12px; }
+label { display: block; font-size: 0.85rem; color: #666; margin-bottom: 5px; }
+input { 
+    width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; 
 }
 
-.result-box p {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-    font-size: 1em;
-    padding: 5px 0;
-    border-bottom: 1px dashed #eee;
+/* --- GRID SYSTEM UNTUK VARIAN --- */
+.varian-header, .varian-item {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 2fr 40px; /* Rasio lebar kolom */
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
 }
-
-.result-box p:last-child {
-    border-bottom: none;
-}
-
-.result-box span {
-    font-weight: bold;
-    color: #28a745; 
-}
-
-#keuntunganBersih {
-    font-size: 1.2em;
-    color: #ff5722; 
-}
-
-.status-msg {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 1.1em;
-}
-
-.status-msg.untung {
-    color: #155724;
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    font-weight: bold;
-}
-
-.status-msg.rugi {
-    color: #721c24;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    font-weight: bold;
-}
-
-/* --- Gaya Multi-Varian (Perbaikan UX) --- */
 
 .varian-header {
-    display: flex;
-    gap: 8px;
+    font-size: 0.7rem;
     font-weight: bold;
-    color: #555;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #ddd;
+    color: #999;
+    text-transform: uppercase;
+    padding: 0 5px;
 }
 
-.varian-header .header-name {
-    flex-basis: 35%; 
-    text-align: left;
-}
-.varian-header .header-qty {
-    flex-basis: 18%; 
-    text-align: center;
-}
-.varian-header .header-modal {
-    flex-basis: 40%; 
-    text-align: left;
-}
-.varian-header .header-action {
-    flex-basis: 7%; 
-}
+.varian-item input { padding: 8px; font-size: 0.9rem; }
 
-.varian-item {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-    align-items: center;
-}
-
-.varian-item .nama-barang {
-    flex-basis: 35%;
-}
-
-.varian-item .jumlah-barang {
-    flex-basis: 18%;
-    text-align: center;
-    padding: 8px 5px;
-}
-
-.varian-item .modal-per-pcs {
-    flex-basis: 40%;
-}
-
-.remove-btn {
-    flex-basis: 7%; 
-    width: 32px !important;
-    height: 32px;
-    padding: 0;
-    line-height: 1;
-    background-color: #6c757d !important;
-    border-radius: 50% !important;
-    font-size: 14px;
-    margin: 0 !important;
-    box-shadow: none;
+/* Buttons */
+.remove-btn { 
+    background: #ffeded; color: #ff4d4d; border: 1px solid #ffcccc; 
+    border-radius: 50%; height: 30px; width: 30px; cursor: pointer;
 }
 
 .add-btn {
-    background-color: #28a745 !important;
-    margin-bottom: 20px !important;
+    width: 100%; background: #fff; color: var(--primary); 
+    border: 1px dashed var(--primary); padding: 8px; border-radius: 8px; cursor: pointer;
+}
+
+.calc-btn {
+    width: 100%; background: var(--orange); color: #fff; border: none;
+    padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px;
+}
+
+/* Result Box */
+.result-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 20px; }
+.res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+.res-row.total { border-top: 1px solid #ddd; padding-top: 10px; font-weight: bold; font-size: 1.1rem; }
+.status-msg { text-align: center; margin-top: 10px; font-weight: bold; padding: 8px; border-radius: 5px; }
+
+.untung { background: #d4edda; color: #155724; }
+.rugi { background: #f8d7da; color: #721c24; }
+
+/* Mobile Optimization */
+@media (max-width: 400px) {
+    .varian-header { font-size: 0.6rem; }
+    .varian-header, .varian-item { grid-template-columns: 2fr 0.8fr 1.5fr 35px; gap: 4px; }
+}
+
+/* ... tambahkan di bagian bawah file CSS ... */
+.reset-btn {
+    width: 100%;
+    background: #6c757d; /* Abu-abu */
+    color: #fff;
+    border: none;
     padding: 10px;
-    font-size: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.reset-btn:hover {
+    background: #5a6268;
+}
+
+/* --- Custom Modal Styling --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px); /* Efek blur di belakang */
+    display: none; /* Sembunyi secara default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: 0.3s;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    transform: scale(0.8);
+    transition: 0.3s;
+}
+
+/* Munculkan modal dengan animasi scale */
+.modal-overlay.active { display: flex; }
+.modal-overlay.active .modal-box { transform: scale(1); }
+
+.modal-icon { font-size: 3rem; margin-bottom: 10px; }
+.modal-box h3 { margin: 0 0 10px; color: #333; border: none; padding: 0; }
+.modal-box p { font-size: 0.9rem; color: #666; line-height: 1.4; margin-bottom: 25px; }
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-cancel { background: #eee; color: #666; }
+.btn-cancel:hover { background: #ddd; }
+
+.btn-confirm { background: #ff4d4d; color: #fff; }
+.btn-confirm:hover { background: #e60000; }
+
+/* --- ANIMATIONS --- */
+
+/* Animasi muncul (Slide Down + Fade In) */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animasi angka bergetar (kalau rugi) atau mantul (kalau untung) */
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Update gaya varian item agar ada animasinya */
+.varian-item {
+    animation: slideDown 0.3s ease-out; /* Munculnya halus */
+    transition: all 0.3s ease;
+}
+
+/* Efek saat baris mau dihapus (via JS nanti) */
+.removing {
+    opacity: 0;
+    transform: translateX(30px);
+    pointer-events: none;
+}
+
+/* Hover effect di semua tombol */
+button {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Animasi pada Result Box saat angka berubah */
+.result-box.updated {
+    animation: bounce 0.4s ease-in-out;
+}
+
+/* Styling tambahan biar cantik */
+.res-row span {
+    transition: all 0.5s ease;
+}
+
+/* Update CSS Modal di style.css */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none; /* Default sembunyi */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Saat Modal Aktif */
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 85%;
+    max-width: 350px;
+    text-align: center;
+    /* Animasi mental (bounce) */
+    transform: translateY(30px) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-box {
+    transform: translateY(0) scale(1);
 }
